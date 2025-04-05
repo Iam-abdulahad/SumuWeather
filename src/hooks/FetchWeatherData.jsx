@@ -7,15 +7,17 @@ const FetchWeatherData = async (latitude, longitude, timezone) => {
         latitude,
         longitude,
         current:
-          "temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,precipitation",
-        hourly: "temperature_2m,rain,snowfall,relative_humidity_2m",
+          "temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code",
+        hourly: "temperature_2m,rain,snowfall,relative_humidity_2m,weather_code",
         daily:
           "temperature_2m_max,temperature_2m_min,rain_sum,snowfall_sum,weather_code",
-        timezone: timezone || "auto",
+        air_quality: "pm10,pm2_5,carbon_monoxide,nitrogen_dioxide",
+        timezone: timezone || "Asia/Dhaka",
       },
     });
-
+    console.log(response.data)
     return response.data;
+    
   } catch (error) {
     console.error("Failed to fetch weather data:", error);
     return null;
