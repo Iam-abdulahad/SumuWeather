@@ -7,10 +7,10 @@ const FetchWeatherData = async (latitude, longitude, timezone) => {
         latitude,
         longitude,
         current:
-          "temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code",
-        hourly: "temperature_2m,rain,snowfall,relative_humidity_2m,weather_code",
+          "temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,weather_code,precipitation,apparent_temperature",
+        hourly: "temperature_2m,precipitation,snowfall,relative_humidity_2m,weather_code",
         daily:
-          "temperature_2m_max,temperature_2m_min,rain_sum,snowfall_sum,weather_code",
+          "temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum,weather_code",
         air_quality: "pm10,pm2_5,carbon_monoxide,nitrogen_dioxide",
         timezone: timezone || "Asia/Dhaka",
       },
