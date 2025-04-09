@@ -143,6 +143,10 @@ const WeatherDashboard = () => {
     }
   }, [latitude, longitude]);
 
+  useEffect(() => {
+    document.title = `SuMo Weather || ${cityName}`;
+  }, [cityName]);
+
   // Update local time based on timezone
   useEffect(() => {
     const updateTime = () => {
@@ -255,7 +259,7 @@ const WeatherDashboard = () => {
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-lg transition-all duration-300 ease-in-out transform shadow-md ${
                   loading
                     ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700 hover:scale-105"
+                    : "bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 hover:bg-blue-700 hover:scale-105"
                 } text-white`}
                 disabled={loading}
               >
@@ -355,10 +359,9 @@ const WeatherDashboard = () => {
 
       {/* Hourly Weather */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold tracking-tight text-gray-800">
+        <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-transparent bg-clip-text tracking-wide mt-10 mb-6">
           Upcoming Hours
         </h2>
-
         <div className="flex overflow-x-auto space-x-4 pb-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
           {upcomingHours.map(({ time, temp, precipitation, weatherCode }) => (
             <div
@@ -388,7 +391,9 @@ const WeatherDashboard = () => {
 
       {/* Weekly Weather Forecast */}
       <div className="space-y-4 font-sans">
-        <h2 className="text-2xl font-bold text-gray-800">7-Day Forecast</h2>
+        <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-transparent bg-clip-text tracking-wide mt-10 mb-6">
+          7-Days Forecast
+        </h2>
         <div className="overflow-hidden rounded-2xl shadow-lg border border-gray-200">
           <table className="w-full text-center">
             <thead className="bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 text-gray-700 text-sm uppercase tracking-wide">

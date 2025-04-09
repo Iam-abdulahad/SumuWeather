@@ -4,11 +4,12 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 
 function App() {
+
   return (
     <>
-      <Header></Header>
-      <CombinedWeather></CombinedWeather>
-      <Footer></Footer>
+      <Header />
+      <CombinedWeather />
+      <Footer />
     </>
   );
 }

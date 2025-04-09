@@ -1,10 +1,13 @@
 import { motion } from "framer-motion";
-import { FaGithub, FaLinkedin, FaEnvelope, FaTwitter } from "react-icons/fa";
-import { SiFiverr } from "react-icons/si";
+import {
+  FaGithub,
+  FaLinkedin,
+  FaGlobe,
+} from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white py-10">
+    <footer className="relative bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 text-white py-10">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -15,7 +18,7 @@ const Footer = () => {
           {/* About Section */}
           <div>
             <h3 className="text-lg font-semibold mb-4">About This App</h3>
-            <p className="text-sm text-gray-400 leading-relaxed">
+            <p className="text-sm text-gray-200 leading-relaxed">
               This weather app provides real-time updates, forecasts, and
               detailed insights about the climate in your area and across the
               globe. Stay prepared and informed at all times.
@@ -29,7 +32,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#features"
-                  className="text-sm text-gray-400 hover:text-white transition"
+                  className="text-white/70 hover:text-white hover:scale-110 transition-transform duration-300"
                 >
                   Features
                 </a>
@@ -37,7 +40,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#forecast"
-                  className="text-sm text-gray-400 hover:text-white transition"
+                  className="text-white/70 hover:text-white hover:scale-110 transition-transform duration-300"
                 >
                   Forecast
                 </a>
@@ -45,7 +48,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#contact"
-                  className="text-sm text-gray-400 hover:text-white transition"
+                  className="text-white/70 hover:text-white hover:scale-110 transition-transform duration-300"
                 >
                   Contact Us
                 </a>
@@ -55,48 +58,34 @@ const Footer = () => {
 
           {/* Contact Section */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
-            <p className="text-sm text-gray-400">
-              Have suggestions or feedback? Connect with us:
+            <h3 className="text-lg font-semibold mb-4">Connect With Developer</h3>
+            <p className="text-sm text-gray-200">
+              Have suggestions or feedback? Connect with me:
             </p>
             <div className="flex space-x-4 mt-4">
               <a
-                href="https://github.com/YourGithub"
+                href="https://ahad-dev.web.app/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition"
+                className="text-white/70 hover:text-white hover:scale-110 transition-transform duration-300"
+              >
+                <FaGlobe className="text-2xl" />
+              </a>
+              <a
+                href="https://github.com/Iam-abdulahad"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/70 hover:text-white hover:scale-110 transition-transform duration-300"
               >
                 <FaGithub className="text-2xl" />
               </a>
               <a
-                href="https://www.linkedin.com/in/YourLinkedIn"
+                href="https://www.linkedin.com/in/iam-abdulahad"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition"
+                className="text-white/70 hover:text-white hover:scale-110 transition-transform duration-300"
               >
                 <FaLinkedin className="text-2xl" />
-              </a>
-              <a
-                href="mailto:your-email@example.com"
-                className="text-gray-400 hover:text-white transition"
-              >
-                <FaEnvelope className="text-2xl" />
-              </a>
-              <a
-                href="https://x.com/YourTwitter"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition"
-              >
-                <FaTwitter className="text-2xl" />
-              </a>
-              <a
-                href="https://www.fiverr.com/YourFiverr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition"
-              >
-                <SiFiverr className="text-2xl" />
               </a>
             </div>
           </div>
@@ -104,8 +93,9 @@ const Footer = () => {
 
         {/* Divider */}
         <div className="border-t border-blue-700 mt-10 pt-6 text-center">
-          <p className="text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} WeatherApp || All rights reserved.
+          <p className="text-sm text-gray-200">
+            &copy; {new Date().getFullYear()} SuMo Weather || All rights
+            reserved.
           </p>
         </div>
 
