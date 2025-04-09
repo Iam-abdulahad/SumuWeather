@@ -73,43 +73,65 @@ const WeatherDashboard = () => {
         async (position) => {
           setLatitude(position.coords.latitude);
           setLongitude(position.coords.longitude);
-          // getCityName(latitude, longitude);
 
-          // Fetch weather with the user's location
-          const data = await FetchWeatherData(
-            position.coords.latitude,
-            position.coords.longitude,
-            "auto"
-          );
+          try {
+            const data = await FetchWeatherData(
+              position.coords.latitude,
+              position.coords.longitude,
+              "auto"
+            );
 
-          if (data) {
-            setWeatherData(data);
-            setTimezone(data.timezone);
-            setWeatherCode(data?.current?.weather_code);
+            if (data) {
+              setWeatherData(data);
+              setTimezone(data.timezone);
+              setWeatherCode(data?.current?.weather_code);
+            }
+          } catch (error) {
+            console.warn(error.message);
+            Swal.fire({
+              icon: "error",
+              title: "Failed to fetch weather data",
+              text: "Something went wrong while fetching weather information.",
+            });
           }
         },
         async (error) => {
           console.warn("Location access denied:", error.message);
-          alert("Please enable location access for real-time weather updates.");
+
+          await Swal.fire({
+            icon: "warning",
+            title: "Location Access Denied",
+            text: "Defaulting to Dhaka for weather data. Please enable location access for better accuracy.",
+          });
 
           // Default to Dhaka if user denies location access
           setLatitude(23.8103);
           setLongitude(90.4125);
 
-          const data = await FetchWeatherData(23.8103, 90.4125, "Asia/Dhaka");
-          if (data) {
-            setWeatherData(data);
-            setTimezone("Asia/Dhaka");
+          try {
+            const data = await FetchWeatherData(23.8103, 90.4125, "Asia/Dhaka");
+            if (data) {
+              setWeatherData(data);
+              setTimezone("Asia/Dhaka");
+            }
+          } catch (error) {
+            console.warn(error.message);
+            Swal.fire({
+              icon: "error",
+              title: "Failed to load default weather data",
+              text: "We couldn't fetch weather information for Dhaka either.",
+            });
           }
         }
       );
     } else {
-      alert("Geolocation is not supported by your browser.");
+      Swal.fire({
+        icon: "info",
+        title: "Geolocation Not Supported",
+        text: "Your browser does not support geolocation.",
+      });
     }
   }, []);
-
-  // console.log(latitude, longitude, timezone, localTime, weatherCode);
-
   const getCityName = async (latitude, longitude) => {
     if (latitude == null || longitude == null) return null;
 
@@ -123,8 +145,6 @@ const WeatherDashboard = () => {
         response.data.address.town ||
         response.data.address.village ||
         response.data.address.hamlet;
-
-      console.log("Nearby City:", city);
       setCityName(cityName);
     } catch (error) {
       console.error("Failed to get city name:", error);
