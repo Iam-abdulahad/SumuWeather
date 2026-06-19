@@ -25,35 +25,47 @@ import { FaSearch } from "react-icons/fa";
 import Swal from "sweetalert2";
 
 const weatherIcons = {
-  0: <WiDaySunny size={80} color="#FFD700" />, // Clear sky (golden yellow)
-  1: <WiDayCloudy size={80} color="#FBC02D" />, // Mainly clear (sunshine yellow)
-  2: <WiCloud size={80} color="#90A4AE" />, // Partly cloudy (light gray-blue)
-  3: <WiCloud size={80} color="#607D8B" />, // Overcast (darker gray)
-  45: <WiFog size={80} color="#B0BEC5" />, // Fog (soft gray)
-  48: <WiFog size={80} color="#B0BEC5" />, // Depositing rime fog
-  51: <WiShowers size={80} color="#4FC3F7" />, // Light drizzle (light blue)
-  53: <WiShowers size={80} color="#29B6F6" />, // Moderate drizzle
-  55: <WiShowers size={80} color="#0288D1" />, // Dense drizzle
-  56: <WiSleet size={80} color="#81D4FA" />, // Light freezing drizzle
-  57: <WiSleet size={80} color="#4FC3F7" />, // Dense freezing drizzle
-  61: <WiRain size={80} color="#2196F3" />, // Slight rain (blue)
-  63: <WiRain size={80} color="#1976D2" />, // Moderate rain
-  65: <WiRain size={80} color="#0D47A1" />, // Heavy rain (dark blue)
-  66: <WiSleet size={80} color="#00ACC1" />, // Light freezing rain (teal)
-  67: <WiSleet size={80} color="#00838F" />, // Heavy freezing rain
-  71: <WiSnow size={80} color="#E1F5FE" />, // Slight snowfall (light snow blue)
-  73: <WiSnow size={80} color="#B3E5FC" />, // Moderate snowfall
-  75: <WiSnow size={80} color="#81D4FA" />, // Heavy snowfall
-  77: <WiSnow size={80} color="#B2EBF2" />, // Snow grains
-  80: <WiShowers size={80} color="#4FC3F7" />, // Slight rain showers
-  81: <WiShowers size={80} color="#0288D1" />, // Moderate rain showers
-  82: <WiThunderstorm size={80} color="#673AB7" />, // Violent rain showers (deep purple)
-  85: <WiSnow size={80} color="#B3E5FC" />, // Slight snow showers
-  86: <WiSnow size={80} color="#81D4FA" />, // Heavy snow showers
-  95: <WiThunderstorm size={80} color="#FF5722" />, // Thunderstorm (orange-red)
-  96: <WiThunderstorm size={80} color="#E64A19" />, // Thunderstorm with slight hail
-  99: <WiThunderstorm size={80} color="#D84315" />, // Thunderstorm with heavy hail
+  0: <WiDaySunny size={80} color="#FFD166" />,
+  1: <WiDayCloudy size={80} color="#FACC15" />,
+  2: <WiCloud size={80} color="#93C5FD" />,
+  3: <WiCloud size={80} color="#64748B" />,
+  45: <WiFog size={80} color="#CBD5E1" />,
+  48: <WiFog size={80} color="#CBD5E1" />,
+  51: <WiShowers size={80} color="#67E8F9" />,
+  53: <WiShowers size={80} color="#38BDF8" />,
+  55: <WiShowers size={80} color="#0284C7" />,
+  56: <WiSleet size={80} color="#7DD3FC" />,
+  57: <WiSleet size={80} color="#22D3EE" />,
+  61: <WiRain size={80} color="#38BDF8" />,
+  63: <WiRain size={80} color="#2563EB" />,
+  65: <WiRain size={80} color="#1E3A8A" />,
+  66: <WiSleet size={80} color="#14B8A6" />,
+  67: <WiSleet size={80} color="#0F766E" />,
+  71: <WiSnow size={80} color="#E0F2FE" />,
+  73: <WiSnow size={80} color="#BAE6FD" />,
+  75: <WiSnow size={80} color="#7DD3FC" />,
+  77: <WiSnow size={80} color="#A5F3FC" />,
+  80: <WiShowers size={80} color="#67E8F9" />,
+  81: <WiShowers size={80} color="#0EA5E9" />,
+  82: <WiThunderstorm size={80} color="#A78BFA" />,
+  85: <WiSnow size={80} color="#BAE6FD" />,
+  86: <WiSnow size={80} color="#7DD3FC" />,
+  95: <WiThunderstorm size={80} color="#FB7185" />,
+  96: <WiThunderstorm size={80} color="#F97316" />,
+  99: <WiThunderstorm size={80} color="#EA580C" />,
 };
+
+const renderMetricCard = (icon, label, value) => (
+  <div className="rounded-2xl border border-white/25 bg-white/15 p-4 text-left shadow-lg shadow-slate-950/10 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/25">
+    <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 text-3xl text-cyan-100">
+      {icon}
+    </div>
+    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-100/80">
+      {label}
+    </p>
+    <p className="mt-1 text-lg font-bold text-white">{value || "N/A"}</p>
+  </div>
+);
 
 const WeatherDashboard = () => {
   const [weatherData, setWeatherData] = useState(null);
@@ -63,7 +75,7 @@ const WeatherDashboard = () => {
   const [longitude, setLongitude] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [timezone, setTimezone] = useState("Asia/Dhaka"); // Default to Dhaka
+  const [timezone, setTimezone] = useState("Asia/Dhaka");
   const [localTime, setLocalTime] = useState("");
   const [weatherCode, setWeatherCode] = useState("");
 
@@ -104,7 +116,6 @@ const WeatherDashboard = () => {
             text: "Defaulting to Dhaka for weather data. Please enable location access for better accuracy.",
           });
 
-          // Default to Dhaka if user denies location access
           setLatitude(23.8103);
           setLongitude(90.4125);
 
@@ -113,6 +124,7 @@ const WeatherDashboard = () => {
             if (data) {
               setWeatherData(data);
               setTimezone("Asia/Dhaka");
+              setWeatherCode(data?.current?.weather_code);
             }
           } catch (error) {
             console.warn(error.message);
@@ -132,6 +144,7 @@ const WeatherDashboard = () => {
       });
     }
   }, []);
+
   const getCityName = async (latitude, longitude) => {
     if (latitude == null || longitude == null) return null;
 
@@ -164,10 +177,9 @@ const WeatherDashboard = () => {
   }, [latitude, longitude]);
 
   useEffect(() => {
-    document.title = `SuMo Weather || ${cityName}`;
+    document.title = `SuMo Weather || ${cityName || "Weather"}`;
   }, [cityName]);
 
-  // Update local time based on timezone
   useEffect(() => {
     const updateTime = () => {
       const date = new Date().toLocaleString("en-US", { timeZone: timezone });
@@ -175,21 +187,20 @@ const WeatherDashboard = () => {
     };
 
     updateTime();
-    const interval = setInterval(updateTime, 60000); // Update every minute
+    const interval = setInterval(updateTime, 60000);
 
     return () => clearInterval(interval);
   }, [timezone]);
 
   const handleSearch = async () => {
-    if (!city) {
-      setError("Please enter a Valid city name!");
+    if (!city || !city.trim()) {
+      setError("Please enter a valid city name!");
       return;
     }
-    if (!city.trim()) {
-      setError("Please enter a city name!");
-      return;
-    }
+
     setLoading(true);
+    setError("");
+
     try {
       const geoResponse = await axios.get(
         "https://geocoding-api.open-meteo.com/v1/search",
@@ -204,9 +215,13 @@ const WeatherDashboard = () => {
         setLongitude(longitude);
         const data = await FetchWeatherData(latitude, longitude, "auto");
         setWeatherData(data);
+        setTimezone(data?.timezone || "auto");
+        setWeatherCode(data?.current?.weather_code);
+      } else {
+        setError("No city found. Try another place.");
       }
     } catch (error) {
-      setError(error.response.data);
+      setError(error.response?.data?.reason || "Failed to search this city.");
     } finally {
       setLoading(false);
       setCity("");
@@ -228,7 +243,6 @@ const WeatherDashboard = () => {
   const hourlyWeather = weatherData?.hourly || {};
   const dailyWeather = weatherData?.daily || {};
 
-  // Show only present and future hours
   const now = new Date();
   const upcomingHours =
     hourlyWeather?.time
@@ -236,55 +250,55 @@ const WeatherDashboard = () => {
         time,
         temp: hourlyWeather.temperature_2m?.[index] || "N/A",
         precipitation: hourlyWeather.precipitation?.[index] || 0,
-        weatherCode: hourlyWeather.weather_code?.[index] || null, // Fetching weather code correctly
+        weatherCode: hourlyWeather.weather_code?.[index] || null,
       }))
       .filter(({ time }) => new Date(time) >= now) || [];
-  const upcomingHoursCount = Math.min(upcomingHours.length, 12); // Limit to 12 hours
-  const upcomingHoursToShow = upcomingHours.slice(0, upcomingHoursCount);
+  const upcomingHoursToShow = upcomingHours.slice(0, 12);
 
   return (
-    <div className="container mx-auto p-4 space-y-6 overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,#38bdf8_0,#0f172a_34%,#111827_68%,#020617_100%)] px-4 py-8 text-slate-100">
       <motion.div
         initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 0.2, scale: 1 }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          repeatType: "mirror",
-        }}
-        className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-30 blur-3xl"
-      ></motion.div>
+        animate={{ opacity: 0.28, scale: 1 }}
+        transition={{ duration: 12, repeat: Infinity, repeatType: "mirror" }}
+        className="absolute -left-24 top-8 h-72 w-72 rounded-full bg-cyan-300 blur-3xl"
+      />
+      <motion.div
+        initial={{ opacity: 0.15, y: 0 }}
+        animate={{ opacity: 0.35, y: 28 }}
+        transition={{ duration: 9, repeat: Infinity, repeatType: "mirror" }}
+        className="absolute right-0 top-40 h-80 w-80 rounded-full bg-rose-400/70 blur-3xl"
+      />
 
-      {/* Search Bar */}
-      <div className="relative flex justify-center items-center">
+      <div className="relative z-10 mx-auto max-w-6xl space-y-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 w-full max-w-lg p-6  bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 bg-opacity-20 rounded-2xl shadow-2xl backdrop-blur-lg border border-white border-opacity-30"
+          className="overflow-hidden rounded-[2rem] border border-white/20 bg-white/10 p-4 shadow-2xl shadow-cyan-950/40 backdrop-blur-2xl md:p-6"
         >
-          <div className="max-w-md mx-auto">
-            <div className="flex space-x-2 mb-6">
+          <div className="mx-auto mb-6 max-w-2xl">
+            <div className="flex flex-col gap-3 rounded-2xl border border-white/15 bg-slate-950/35 p-3 shadow-inner shadow-black/20 sm:flex-row">
               <input
                 type="text"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Search city..."
-                className="flex-1 p-3 rounded-lg bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 shadow-sm"
+                className="min-h-12 flex-1 rounded-xl border border-white/10 bg-white/95 px-4 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-cyan-300 focus:ring-4 focus:ring-cyan-300/25"
                 disabled={loading}
               />
               <button
                 onClick={handleSearch}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg transition-all duration-300 ease-in-out transform shadow-md ${
+                className={`flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 font-bold text-white shadow-lg transition-all duration-300 ${
                   loading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 hover:bg-blue-700 hover:scale-105"
-                } text-white`}
+                    ? "cursor-not-allowed bg-slate-500"
+                    : "bg-gradient-to-r from-cyan-400 via-sky-500 to-fuchsia-500 shadow-cyan-950/30 hover:-translate-y-0.5 hover:shadow-xl"
+                }`}
                 disabled={loading}
               >
                 {loading ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 ) : (
                   <>
                     <FaSearch />
@@ -293,7 +307,11 @@ const WeatherDashboard = () => {
                 )}
               </button>
             </div>
-            {error && <p className="text-red-500 text-sm">{error.message}</p>}
+            {error && (
+              <p className="mt-3 rounded-xl bg-rose-500/15 px-4 py-2 text-sm font-medium text-rose-100">
+                {error}
+              </p>
+            )}
           </div>
 
           {currentWeather && (
@@ -301,166 +319,181 @@ const WeatherDashboard = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-center space-y-4 p-6  bg-gradient-to-br from-blue-300 via-purple-300 to-pink-300 backdrop-blur-md rounded-xl shadow-lg"
+              className="grid gap-6 rounded-[1.5rem] bg-gradient-to-br from-sky-500/85 via-indigo-500/80 to-rose-500/85 p-5 shadow-2xl shadow-slate-950/30 md:grid-cols-[1.05fr_1.45fr] md:p-8"
             >
-              <h2 className="text-4xl font-extrabold text-white drop-shadow">
-                {cityName}
-              </h2>
-              <p className="text-xl text-white opacity-90">
-                {weatherData?.timezone}
-              </p>
+              <div className="flex flex-col justify-between rounded-[1.25rem] border border-white/25 bg-white/15 p-6 text-center shadow-xl shadow-slate-950/10 backdrop-blur-md md:text-left">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-[0.24em] text-cyan-100">
+                    Live Weather
+                  </p>
+                  <h2 className="mt-3 text-4xl font-black text-white drop-shadow md:text-5xl">
+                    {cityName || "Your Area"}
+                  </h2>
+                  <p className="mt-2 text-sm font-medium text-white/75">
+                    {weatherData?.timezone}
+                  </p>
+                </div>
 
-              <div className="text-6xl font-bold text-white drop-shadow">
-                {weatherData?.current?.temperature_2m}°C
+                <div className="my-6 flex items-center justify-center gap-4 md:justify-start">
+                  <div className="flex h-28 w-28 items-center justify-center rounded-full bg-white/20 shadow-inner">
+                    {weatherIcons[currentWeather?.weather_code || weatherCode] || (
+                      <WiCloud size={86} />
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-6xl font-black leading-none text-white drop-shadow-lg md:text-7xl">
+                      {weatherData?.current?.temperature_2m}°C
+                    </div>
+                    <p className="mt-2 text-sm font-semibold text-cyan-50/80">
+                      Feels like {currentWeather?.apparent_temperature}°C
+                    </p>
+                  </div>
+                </div>
+
+                <p className="rounded-full bg-slate-950/25 px-4 py-2 text-xs font-semibold text-white/75">
+                  Local time: {localTime || "Updating..."}
+                </p>
               </div>
-              <div className="flex justify-center items-center text-white">
-                {weatherIcons[currentWeather?.weather_code] || (
-                  <WiCloud size={80} />
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {renderMetricCard(
+                  <WiHumidity />,
+                  "Humidity",
+                  `${weatherData?.current?.relative_humidity_2m}%`
+                )}
+                {renderMetricCard(
+                  <WiStrongWind />,
+                  "Wind",
+                  `${currentWeather?.wind_speed_10m} km/h`
+                )}
+                {renderMetricCard(
+                  <WiSunrise />,
+                  "Sunrise",
+                  weatherData?.daily?.sunrise?.[0]?.slice(11)
+                )}
+                {renderMetricCard(
+                  <WiSunset />,
+                  "Sunset",
+                  weatherData?.daily?.sunset?.[0]?.slice(11)
+                )}
+                {renderMetricCard(
+                  <WiDirectionUp />,
+                  "High",
+                  `${weatherData?.daily?.temperature_2m_max?.[0]}°C`
+                )}
+                {renderMetricCard(
+                  <WiDirectionDown />,
+                  "Low",
+                  `${weatherData?.daily?.temperature_2m_min?.[0]}°C`
+                )}
+                {renderMetricCard(
+                  <WiRaindrops />,
+                  "Rainfall",
+                  `${weatherData?.daily?.precipitation_sum?.[0]} mm`
+                )}
+                {renderMetricCard(
+                  <WiThermometer />,
+                  "Updated",
+                  new Date().toLocaleTimeString()
                 )}
               </div>
-
-              <div className="grid grid-cols-2 gap-4 text-white text-sm mt-6">
-                <div className="flex items-center space-x-2">
-                  <WiHumidity className="text-xl" />
-                  <span>
-                    Humidity: {weatherData?.current?.relative_humidity_2m}%
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <WiStrongWind className="text-xl" />
-                  <span>Wind: {currentWeather?.wind_speed_10m} km/h</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <WiSunrise className="text-xl" />
-                  <span>
-                    Sunrise: {weatherData?.daily?.sunrise?.[0]?.slice(11)}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <WiSunset className="text-xl" />
-                  <span>
-                    Sunset: {weatherData?.daily?.sunset?.[0]?.slice(11)}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <WiThermometer className="text-xl" />
-                  <span>
-                    Feels Like: {currentWeather?.apparent_temperature}°C
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <WiDirectionUp className="text-xl" />
-                  <span>
-                    Max: {weatherData?.daily?.temperature_2m_max?.[0]}°C
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <WiDirectionDown className="text-xl" />
-                  <span>
-                    Min: {weatherData?.daily?.temperature_2m_min?.[0]}°C
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <WiRaindrops className="text-xl" />
-                  <span>
-                    Precipitation: {weatherData?.daily?.precipitation_sum?.[0]}{" "}
-                    mm
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-white text-xs mt-6 opacity-80">
-                Last Updated: {new Date().toLocaleTimeString()}
-              </p>
             </motion.div>
           )}
         </motion.div>
-      </div>
 
-      {/* Hourly Weather */}
-      <div className="space-y-4">
-        <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-transparent bg-clip-text tracking-wide mt-10 mb-6">
-          Upcoming Hours
-        </h2>
-        <div className="flex overflow-x-auto space-x-4 pb-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
-          {upcomingHours.map(({ time, temp, precipitation, weatherCode }) => (
-            <div
-              key={time}
-              className="bg-gradient-to-b from-white to-gray-50 shadow-md rounded-2xl px-4 py-5 min-w-[110px] flex flex-col items-center justify-center transition-transform hover:scale-105 duration-200 ease-in-out"
-            >
-              <p className="text-sm font-medium text-gray-500">
-                {formatDate(time, { hour: "2-digit", minute: "2-digit" })}
-              </p>
-
-              {/* Icon Container with fixed size */}
-              <div className="w-12 h-12 flex items-center justify-center my-2 text-blue-400">
-                {/* Ensure all icons have the same size */}
-                {React.cloneElement(weatherIcons[weatherCode] || <WiCloud />, {
-                  size: 42,
-                })}
-              </div>
-
-              <p className="text-lg font-semibold text-gray-700">{temp}°C</p>
-              <p className="text-xs text-blue-500 mt-1 text-center">
-                Precipitation <br /> {precipitation} mm
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Weekly Weather Forecast */}
-      <div className="space-y-4 font-sans">
-        <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-transparent bg-clip-text tracking-wide mt-10 mb-6">
-          7-Days Forecast
-        </h2>
-        <div className="overflow-hidden rounded-2xl shadow-lg border border-gray-200">
-          <table className="w-full text-center">
-            <thead className="bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 text-gray-700 text-sm uppercase tracking-wide">
-              <tr>
-                <th className="p-2.5">Date</th>
-                <th className="p-2.5">Temp (°C)</th>
-                <th className="p-2.5">Precipitation</th>
-                <th className="p-2.5">Sky</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-700 text-sm">
-              {dailyWeather.time?.map((date, index) => (
-                <tr
-                  key={date}
-                  className="hover:bg-gray-50 transition duration-200 ease-in-out"
+        <section className="space-y-4">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.22em] text-cyan-200">
+              Next 12 Hours
+            </p>
+            <h2 className="text-3xl font-black text-white">Hourly Forecast</h2>
+          </div>
+          <div className="flex gap-4 overflow-x-auto rounded-[1.5rem] border border-white/15 bg-white/10 p-4 shadow-xl shadow-slate-950/20 backdrop-blur-xl">
+            {upcomingHoursToShow.map(
+              ({ time, temp, precipitation, weatherCode }) => (
+                <div
+                  key={time}
+                  className="flex min-w-[128px] flex-col items-center justify-center rounded-2xl border border-white/20 bg-white/90 px-4 py-5 text-slate-800 shadow-lg shadow-slate-950/10 transition duration-300 hover:-translate-y-1 hover:bg-cyan-50"
                 >
-                  <td className="p-2.5 font-medium">
-                    {formatDate(date, {
-                      weekday: "short",
-                      day: "numeric",
-                      month: "numeric",
-                    })}
-                  </td>
-                  <td className="p-2.5">
-                    <span className="font-semibold">
-                      {dailyWeather.temperature_2m_max?.[index]}°
-                    </span>{" "}
-                    /{" "}
-                    <span className="text-gray-500">
-                      {dailyWeather.temperature_2m_min?.[index]}°
-                    </span>
-                  </td>
-                  <td className="p-2.5">
-                    {dailyWeather.precipitation_sum?.[index] || 0} mm
-                  </td>
-                  <td className="p-2.5">
-                    <div className="flex justify-center items-center">
-                      {weatherIcons[dailyWeather.weather_code?.[index]] || (
-                        <WiCloud size={32} />
-                      )}
-                    </div>
-                  </td>
+                  <p className="text-sm font-bold text-slate-500">
+                    {formatDate(time, { hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                  <div className="my-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-100 text-sky-500">
+                    {React.cloneElement(
+                      weatherIcons[weatherCode] || <WiCloud />,
+                      { size: 46 }
+                    )}
+                  </div>
+                  <p className="text-2xl font-black text-slate-900">{temp}°C</p>
+                  <p className="mt-2 rounded-full bg-cyan-100 px-3 py-1 text-center text-xs font-bold text-cyan-700">
+                    {precipitation} mm rain
+                  </p>
+                </div>
+              )
+            )}
+          </div>
+        </section>
+
+        <section className="space-y-4 font-sans">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.22em] text-rose-200">
+              This Week
+            </p>
+            <h2 className="text-3xl font-black text-white">7-Day Forecast</h2>
+          </div>
+          <div className="overflow-hidden rounded-[1.5rem] border border-white/15 bg-white/95 shadow-xl shadow-slate-950/20">
+            <table className="w-full text-center">
+              <thead className="bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 text-sm uppercase tracking-wide text-white">
+                <tr>
+                  <th className="p-3">Date</th>
+                  <th className="p-3">Temp (°C)</th>
+                  <th className="p-3">Precipitation</th>
+                  <th className="p-3">Sky</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="text-sm text-slate-700">
+                {dailyWeather.time?.map((date, index) => (
+                  <tr
+                    key={date}
+                    className="border-b border-slate-100 transition duration-200 last:border-b-0 hover:bg-cyan-50"
+                  >
+                    <td className="p-3 font-bold text-slate-800">
+                      {formatDate(date, {
+                        weekday: "short",
+                        day: "numeric",
+                        month: "numeric",
+                      })}
+                    </td>
+                    <td className="p-3">
+                      <span className="font-black text-rose-500">
+                        {dailyWeather.temperature_2m_max?.[index]}°
+                      </span>{" "}
+                      /{" "}
+                      <span className="font-bold text-sky-500">
+                        {dailyWeather.temperature_2m_min?.[index]}°
+                      </span>
+                    </td>
+                    <td className="p-3 font-semibold">
+                      <span className="rounded-full bg-sky-100 px-3 py-1 text-sky-700">
+                        {dailyWeather.precipitation_sum?.[index] || 0} mm
+                      </span>
+                    </td>
+                    <td className="p-3">
+                      <div className="flex items-center justify-center">
+                        {React.cloneElement(
+                          weatherIcons[dailyWeather.weather_code?.[index]] || (
+                            <WiCloud />
+                          ),
+                          { size: 38 }
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
     </div>
   );
