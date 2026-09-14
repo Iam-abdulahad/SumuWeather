@@ -71,7 +71,7 @@ function App() {
       {/* Top bar (Desktop only) */}
       <header className="relative z-40 mx-auto hidden w-full max-w-7xl flex-wrap items-center gap-3 px-4 pt-6 pb-2 md:flex sm:flex-nowrap">
         <h1 className="mr-auto font-display text-xl font-bold text-cloud-white">
-          SuMo
+          SuMo Weather
         </h1>
 
         <SearchBar
@@ -92,7 +92,7 @@ function App() {
       {/* Mobile Header Logo */}
       <header className="relative z-10 mx-auto flex w-full items-center px-4 pt-6 pb-2 md:hidden">
         <h1 className="mx-auto font-display text-xl font-bold text-cloud-white">
-          SuMo
+          SuMo Weather
         </h1>
       </header>
 

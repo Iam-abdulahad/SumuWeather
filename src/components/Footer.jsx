@@ -9,7 +9,7 @@ export default function Footer() {
     <footer className="mt-8 border-t border-white/10 bg-transparent">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-6 sm:flex-row sm:justify-between">
         <p className="font-body text-micro text-cloud-white/75">
-          © {new Date().getFullYear()} SuMo Weather — Crafted by Abdul Ahad
+          © {new Date().getFullYear()} SuMo Weather — Crafted by A.Ahad Ali
         </p>
 
         <div className="flex items-center gap-3">
