@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchWeather, searchLocations, reverseGeocode, fetchAirQuality, fetchAlerts } from '../services/weatherApi';
 
 const STORAGE_KEY = 'sumo-weather-locations-v2';
@@ -37,8 +37,12 @@ export default function useWeather() {
   const [error, setError] = useState(null);
   const [geoStatus, setGeoStatus] = useState('pending'); // 'pending' | 'granted' | 'denied' | 'unavailable'
 
+  // Track the last-attempted coordinates so retry works even if the first fetch failed
+  const lastAttemptRef = useRef(null);
+
   // Fetch weather for given coords
   const loadWeather = useCallback(async (lat, lon, timezone = 'auto', cityName = null) => {
+    lastAttemptRef.current = { lat, lon, timezone, cityName };
     setLoading(true);
     setError(null);
 
@@ -128,6 +132,9 @@ export default function useWeather() {
   const refreshWeather = useCallback(() => {
     if (location) {
       loadWeather(location.latitude, location.longitude, location.timezone, location.name);
+    } else if (lastAttemptRef.current) {
+      const { lat, lon, timezone, cityName } = lastAttemptRef.current;
+      loadWeather(lat, lon, timezone, cityName);
     }
   }, [location, loadWeather]);
 
