@@ -125,6 +125,19 @@ export function getWindDirection(degrees) {
 }
 
 /**
+ * Compute "now" as a Date whose getTime() can be compared against
+ * new Date(isoString) for wall-clock ISO strings (no offset) from Open-Meteo.
+ *
+ * Open-Meteo returns times like "2026-09-22T14:00" which new Date() parses
+ * as browser-local. We shift "now" into that same frame using the location's
+ * utc_offset_seconds so comparisons work for any timezone.
+ */
+export function getLocationNow(utcOffsetSeconds = 0) {
+  const browserOffsetMs = new Date().getTimezoneOffset() * 60000; // negative for east of UTC
+  return new Date(Date.now() + utcOffsetSeconds * 1000 + browserOffsetMs);
+}
+
+/**
  * Format hour string from ISO datetime.
  */
 export function formatHour(isoString) {
@@ -137,10 +150,12 @@ export function formatHour(isoString) {
 
 /**
  * Format day name from ISO date string.
+ * Uses utcOffsetSeconds to determine "today" and "tomorrow" in the
+ * searched location's local time, not the browser's.
  */
-export function formatDayName(isoString) {
+export function formatDayName(isoString, utcOffsetSeconds = 0) {
   const date = new Date(isoString);
-  const today = new Date();
+  const today = getLocationNow(utcOffsetSeconds);
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
@@ -166,11 +181,12 @@ export function formatTime(isoString) {
 /**
  * Calculate sun position as a 0-1 fraction along the sunrise→sunset arc.
  * Returns null if before sunrise or after sunset.
+ * Uses utcOffsetSeconds to compute "now" in the searched location's time.
  */
-export function getSunPosition(sunrise, sunset, timezone) {
+export function getSunPosition(sunrise, sunset, utcOffsetSeconds = 0) {
   if (!sunrise || !sunset) return null;
 
-  const now = new Date();
+  const now = getLocationNow(utcOffsetSeconds);
   const sunriseDate = new Date(sunrise);
   const sunsetDate = new Date(sunset);
 
@@ -183,11 +199,12 @@ export function getSunPosition(sunrise, sunset, timezone) {
 
 /**
  * Get the next 24 hours of hourly data starting from the current hour.
+ * Uses utcOffsetSeconds to find "now" in the searched location's time.
  */
-export function getNext24Hours(hourlyData) {
+export function getNext24Hours(hourlyData, utcOffsetSeconds = 0) {
   if (!hourlyData?.time) return [];
 
-  const now = new Date();
+  const now = getLocationNow(utcOffsetSeconds);
   const currentHourIndex = hourlyData.time.findIndex((t) => {
     const hourDate = new Date(t);
     return hourDate >= now;

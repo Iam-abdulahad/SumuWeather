@@ -12,7 +12,7 @@ export default function SunriseSunsetArc({ weather }) {
 
   const sunrise = weather.daily.sunrise[0];
   const sunset = weather.daily.sunset[0];
-  const sunPosition = getSunPosition(sunrise, sunset, weather.timezone);
+  const sunPosition = getSunPosition(sunrise, sunset, weather.utc_offset_seconds);
 
   // Arc geometry: semicircle from left to right
   // SVG viewBox is 200x110, arc from (20,90) to (180,90) with peak at (100,15)

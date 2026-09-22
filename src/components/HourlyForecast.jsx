@@ -34,7 +34,7 @@ export default function HourlyForecast({ weather, unit }) {
 
   if (!weather?.hourly) return null;
 
-  const hours = getNext24Hours(weather.hourly);
+  const hours = getNext24Hours(weather.hourly, weather.utc_offset_seconds);
   if (hours.length === 0) return null;
 
   const tempUnit = unit === 'metric' ? '°' : '°';

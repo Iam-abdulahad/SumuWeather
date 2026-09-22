@@ -60,7 +60,7 @@ export default function DailyForecast({ weather, unit }) {
                   aria-expanded={isExpanded}
                 >
                   <span className="w-1/4 font-body text-body font-medium text-cloud-white">
-                    {formatDayName(date)}
+                    {formatDayName(date, weather.utc_offset_seconds)}
                   </span>
 
                   <span className="flex-1 text-center font-body text-sm text-cloud-white/85">
@@ -115,7 +115,7 @@ export default function DailyForecast({ weather, unit }) {
       <BottomSheet 
         isOpen={isSheetOpen} 
         onClose={() => setIsSheetOpen(false)}
-        title={selectedDay ? formatDayName(selectedDay.date) : 'Forecast'}
+        title={selectedDay ? formatDayName(selectedDay.date, weather.utc_offset_seconds) : 'Forecast'}
       >
         {selectedDay && (
           <div className="flex flex-col gap-6 text-cloud-white py-4">
