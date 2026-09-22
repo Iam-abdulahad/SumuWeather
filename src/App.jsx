@@ -97,7 +97,7 @@ function App() {
       </header>
 
       {/* Main content */}
-      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-0 py-4 md:px-4">
+      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-0 py-4 pb-[88px] md:px-4 md:pb-4">
         
         {/* Loading state */}
         {loading && !weather && (
