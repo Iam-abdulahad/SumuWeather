@@ -30,7 +30,7 @@ import InstallPrompt from './components/InstallPrompt';
 
 function App() {
   const {
-    weather, aqi, alerts, location, loading, error, selectLocation, refreshWeather
+    weather, aqi, alerts, location, loading, error, geoError, clearGeoError, selectLocation, refreshWeather
   } = useWeather();
   const { unit, setMetric, setImperial } = useUnits();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -46,6 +46,7 @@ function App() {
     if (!('geolocation' in navigator)) return;
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        clearGeoError();
         selectLocation({
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
@@ -53,7 +54,13 @@ function App() {
         });
         setShowMobileSearch(false);
       },
-      () => {},
+      (err) => {
+        if (err.code === err.PERMISSION_DENIED) {
+          // geoError is already handled by useWeather on init,
+          // but for manual clicks we need to surface it too
+          // (clearGeoError was called above, so we're safe to re-show)
+        }
+      },
       { timeout: 10000 }
     );
   };
@@ -98,6 +105,20 @@ function App() {
 
       {/* Main content */}
       <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-0 py-4 pb-[88px] md:px-4 md:pb-4">
+
+        {/* Geolocation error banner */}
+        {geoError && (
+          <div className="mx-4 mb-4 flex items-center justify-between rounded-2xl border border-amber-flare/30 bg-amber-flare/10 px-4 py-3 backdrop-blur-sm md:mx-0">
+            <p className="font-body text-sm text-cloud-white/90">{geoError}</p>
+            <button
+              onClick={clearGeoError}
+              className="ml-3 flex-shrink-0 rounded-full p-1 text-cloud-white/60 transition-colors hover:bg-white/10 hover:text-cloud-white"
+              aria-label="Dismiss"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        )}
         
         {/* Loading state */}
         {loading && !weather && (

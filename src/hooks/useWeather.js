@@ -36,6 +36,7 @@ export default function useWeather() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [geoStatus, setGeoStatus] = useState('pending'); // 'pending' | 'granted' | 'denied' | 'unavailable'
+  const [geoError, setGeoError] = useState(null);
 
   // Track the last-attempted coordinates so retry works even if the first fetch failed
   const lastAttemptRef = useRef(null);
@@ -157,8 +158,13 @@ export default function useWeather() {
         setGeoStatus('granted');
         loadWeather(position.coords.latitude, position.coords.longitude);
       },
-      () => {
+      (err) => {
         setGeoStatus('denied');
+        if (err.code === err.PERMISSION_DENIED) {
+          setGeoError('Location access denied — search for a city instead.');
+        } else {
+          setGeoError("Couldn't determine your location — try again or search.");
+        }
         const saved = loadSavedLocations();
         if (saved && saved.length > 0) {
           const first = saved[0];
@@ -171,6 +177,8 @@ export default function useWeather() {
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const clearGeoError = useCallback(() => setGeoError(null), []);
+
   return {
     weather,
     aqi,
@@ -179,6 +187,8 @@ export default function useWeather() {
     loading,
     error,
     geoStatus,
+    geoError,
+    clearGeoError,
     savedLocations,
     addLocation,
     removeLocation,
