@@ -82,6 +82,51 @@
     background: rgba(255, 255, 255, 0.25);
     border-radius: 3px;
   }
+
+  @layer components {
+    .mobile-bottom-nav {
+      background: rgba(11, 21, 38, 0.92);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.18);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .bottom-nav-button {
+      display: flex;
+      min-width: 72px;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border-radius: 14px;
+      padding: 8px 10px;
+      color: rgba(245, 247, 250, 0.82);
+      transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .bottom-nav-button:hover,
+    .bottom-nav-button:active {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffb454;
+    }
+
+    .bottom-nav-button:active {
+      transform: scale(0.96);
+    }
+
+    .bottom-nav-button span,
+    .bottom-nav-label {
+      font-family: "Inter", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
 }
 
 @layer utilities {

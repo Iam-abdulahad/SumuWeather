@@ -35,6 +35,7 @@ function App() {
     alerts,
     location,
     loading,
+    locating,
     error,
     geoError,
     clearGeoError,
@@ -62,12 +63,8 @@ function App() {
   }, [weather?.current?.weather_code, weather?.current?.is_day]);
 
   // "Use my location" handler
-  const handleUseMyLocation = async () => {
-    try {
-      await locateCurrentUser();
-    } catch {
-      // Error is already handled inside useWeather
-    }
+  const handleUseMyLocation = () => {
+    requestCurrentLocation();
   };
 
   // Select searched location
@@ -167,60 +164,129 @@ function App() {
       {/* =========================================================
           MAIN CONTENT
           ========================================================= */}
-      <main
-        className="
-          relative
-          z-10
-          mx-auto
-          w-full
-          max-w-7xl
-          flex-1
-          px-0
-          py-4
-          pb-[88px]
-          md:px-4
-          md:pb-4
-        "
-      >
+      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-3 py-4 pb-28 sm:px-4 md:px-4 md:pb-4">
         {/* =====================================================
             GEOLOCATION ERROR
             ===================================================== */}
-        {geoError && (
-          <div
-            className="
-              mx-4
-              mb-4
-              flex
-              items-center
-              justify-between
-              rounded-2xl
-              border
-              border-amber-flare/30
-              bg-amber-flare/10
-              px-4
-              py-3
-              backdrop-blur-sm
-              md:mx-0
-            "
-          >
-            <p className="font-body text-sm text-cloud-white/90">{geoError}</p>
+        {/* =====================================================
+    LOCATION STATUS
+===================================================== */}
 
-            <button
-              onClick={clearGeoError}
+        {locating && !weather && (
+          <div className="mx-3 mb-4 md:mx-0">
+            <div
               className="
-                ml-3
-                flex-shrink-0
-                rounded-full
-                p-1
-                text-cloud-white/60
-                transition-colors
-                hover:bg-white/10
-                hover:text-cloud-white
-              "
-              aria-label="Dismiss"
+        flex
+        items-center
+        gap-3
+        rounded-2xl
+        border
+        border-white/10
+        bg-white/5
+        px-4
+        py-3
+        backdrop-blur-xl
+      "
             >
-              <X size={16} />
-            </button>
+              <Loader2 size={18} className="animate-spin text-amber-flare" />
+
+              <div className="min-w-0">
+                <p className="font-body text-sm font-semibold text-cloud-white">
+                  Detecting your location…
+                </p>
+
+                <p className="mt-0.5 font-body text-xs text-cloud-white/60">
+                  You can search for a city while we try.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {geoError && (
+          <div className="mx-3 mb-4 md:mx-0">
+            <div
+              role="alert"
+              className="
+        flex
+        items-start
+        gap-3
+        rounded-2xl
+        border
+        border-amber-flare/30
+        bg-amber-flare/10
+        p-4
+        backdrop-blur-xl
+      "
+            >
+              <MapPin
+                size={20}
+                className="mt-0.5 flex-shrink-0 text-amber-flare"
+              />
+
+              <div className="min-w-0 flex-1">
+                <p className="font-body text-sm font-semibold text-cloud-white">
+                  Location unavailable
+                </p>
+
+                <p className="mt-1 font-body text-sm leading-5 text-cloud-white/75">
+                  {geoError}
+                </p>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={handleUseMyLocation}
+                    className="
+              rounded-xl
+              bg-amber-flare
+              px-4
+              py-2
+              text-xs
+              font-semibold
+              text-deep-atmosphere
+              transition
+              hover:opacity-90
+            "
+                  >
+                    Try again
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={clearGeoError}
+                    className="
+              rounded-xl
+              bg-white/10
+              px-4
+              py-2
+              text-xs
+              font-medium
+              text-cloud-white
+              transition
+              hover:bg-white/15
+            "
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={clearGeoError}
+                className="
+          rounded-full
+          p-1
+          text-cloud-white/50
+          hover:bg-white/10
+          hover:text-cloud-white
+        "
+                aria-label="Close location error"
+              >
+                <X size={18} />
+              </button>
+            </div>
           </div>
         )}
 
@@ -271,7 +337,7 @@ function App() {
         {/* =====================================================
             NO LOCATION STATE
             ===================================================== */}
-        {!loading && !error && !weather && (
+        {!loading && !locating && !error && !weather && (
           <div className="flex items-center justify-center px-4 py-32 md:px-0">
             <GlassCard className="flex max-w-md flex-col items-center gap-4 p-8 text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
@@ -324,7 +390,7 @@ function App() {
               <AlertBanner alerts={alerts} />
             </div>
 
-            <div className="grid min-w-0 grid-cols-1 gap-4 md:gap-5 lg:grid-cols-3">
+            <div className="grid min-w-0 grid-cols-1 gap-3 sm:gap-4 md:gap-5 lg:grid-cols-3">
               {/* Hero */}
               <div className="lg:col-span-2">
                 <HeroCard weather={weather} location={location} unit={unit} />
@@ -348,15 +414,15 @@ function App() {
               {/* Small Cards */}
               <div
                 className="
-                  grid
-                  min-w-0
-                  grid-cols-1
-                  gap-4
-                  md:grid-cols-2
-                  md:gap-5
-                  lg:col-span-3
-                  lg:grid-cols-4
-                "
+    grid
+    min-w-0
+    grid-cols-1
+    gap-3
+    sm:grid-cols-2
+    sm:gap-4
+    lg:col-span-3
+    lg:grid-cols-4
+  "
               >
                 <WindCard weather={weather} unit={unit} />
 
@@ -397,21 +463,24 @@ function App() {
           IMPORTANT:
           Search has been removed from the bottom navigation.
           ========================================================= */}
-      <BottomNav
-        onLocationClick={handleUseMyLocation}
-        onShareClick={() => {
-          const shareBtn = document.querySelector(
-            'button[aria-label="Share snapshot"]',
-          );
+      <div data-capture-hide="true">
+        <BottomNav
+          onLocationClick={handleUseMyLocation}
+          onShareClick={() => {
+            const shareBtn = document.querySelector(
+              'button[aria-label="Share snapshot"]',
+            );
 
-          if (shareBtn) {
-            shareBtn.click();
-          }
-        }}
-        unit={unit}
-        setMetric={setMetric}
-        setImperial={setImperial}
-      />
+            if (shareBtn) {
+              shareBtn.click();
+            }
+          }}
+          unit={unit}
+          setMetric={setMetric}
+          setImperial={setImperial}
+          isLocating={locating}
+        />
+      </div>
     </div>
   );
 }
