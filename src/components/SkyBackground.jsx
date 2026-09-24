@@ -1,6 +1,6 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useMemo } from 'react';
-import useReducedMotion from '../hooks/useReducedMotion';
+import { motion, AnimatePresence } from "framer-motion";
+import { useMemo } from "react";
+import useReducedMotion from "../hooks/useReducedMotion";
 
 /**
  * Full-viewport sky gradient background.
@@ -17,7 +17,7 @@ export default function SkyBackground({ gradient }) {
     };
   }, [gradient]);
 
-  const key = gradient ? `${gradient.from}-${gradient.to}` : 'default';
+  const key = gradient ? `${gradient.from}-${gradient.to}` : "default";
 
   return (
     <div className="fixed inset-0 -z-10" aria-hidden="true">
@@ -31,15 +31,14 @@ export default function SkyBackground({ gradient }) {
           exit={{ opacity: 0 }}
           transition={{
             duration: prefersReducedMotion ? 0 : 1.2,
-            ease: 'easeInOut',
+            ease: "easeInOut",
           }}
         />
       </AnimatePresence>
 
-      {/* Dark scrim for WCAG AA contrast on light sky states */}
-      {gradient?.needsScrim && (
-        <div className="absolute inset-0 sky-scrim" />
-      )}
+      <div className="absolute inset-0 bg-slate-950/15" />
+
+      {gradient?.needsScrim && <div className="absolute inset-0 sky-scrim" />}
     </div>
   );
 }

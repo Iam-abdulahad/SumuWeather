@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+
   *,
   *::before,
   *::after {
@@ -38,18 +39,29 @@
 
 @layer components {
   .glass-card {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(8, 18, 32, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow:
+      0 10px 35px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+    backdrop-filter: blur(22px) saturate(125%);
+    -webkit-backdrop-filter: blur(22px) saturate(125%);
+
     border-radius: 20px;
+    color: #F5F7FA;
   }
 
   .glass-card-hover {
-    transition: background-color 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease;
   }
+
   .glass-card-hover:hover {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(8, 18, 32, 0.82);
+    border-color: rgba(255, 255, 255, 0.24);
   }
 
   /* Scrollbar styling for horizontal scroll areas */
@@ -57,12 +69,15 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
   }
+
   .scrollbar-thin::-webkit-scrollbar {
     height: 6px;
   }
+
   .scrollbar-thin::-webkit-scrollbar-track {
     background: transparent;
   }
+
   .scrollbar-thin::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.25);
     border-radius: 3px;
@@ -70,14 +85,19 @@
 }
 
 @layer utilities {
+
   /* Sky gradient scrim for WCAG AA contrast on light backgrounds */
   .sky-scrim {
-    background: rgba(11, 21, 38, 0.25);
+    background:
+      linear-gradient(180deg,
+        rgba(5, 12, 24, 0.28),
+        rgba(5, 12, 24, 0.42));
   }
 }
 
 /* Respect prefers-reduced-motion globally */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -86,4 +106,21 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+.screenshot-mode {
+  background: #0B1526 !important;
+}
+
+.screenshot-mode .fixed,
+.screenshot-mode [data-no-screenshot] {
+  visibility: hidden !important;
+}
+
+.screenshot-mode .screenshot-hide {
+  display: none !important;
+}
+
+.screenshot-clone {
+  background: #0B1526 !important;
 }

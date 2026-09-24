@@ -164,11 +164,10 @@ export default function SearchBar({ onSelectLocation, onUseMyLocation, loading: 
               key={loc.id}
               onClick={() => handleSelect(loc)}
               onMouseEnter={() => setFocusIndex(index)}
-              className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors ${
-                focusIndex === index
-                  ? 'bg-white/15 text-cloud-white'
-                  : 'text-cloud-white/90 hover:bg-white/10'
-              }`}
+              className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors ${focusIndex === index
+                ? 'bg-white/15 text-cloud-white'
+                : 'text-cloud-white/90 hover:bg-white/10'
+                }`}
               role="option"
               aria-selected={focusIndex === index}
               id={`${resultsId}-${index}`}

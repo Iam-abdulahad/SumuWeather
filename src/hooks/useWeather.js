@@ -1,7 +1,13 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { fetchWeather, searchLocations, reverseGeocode, fetchAirQuality, fetchAlerts } from '../services/weatherApi';
+import { useState, useEffect, useCallback, useRef } from "react";
+import {
+  fetchWeather,
+  searchLocations,
+  reverseGeocode,
+  fetchAirQuality,
+  fetchAlerts,
+} from "../services/weatherApi";
 
-const STORAGE_KEY = 'sumo-weather-locations-v2';
+const STORAGE_KEY = "sumo-weather-locations-v2";
 
 function loadSavedLocations() {
   try {
@@ -31,77 +37,88 @@ export default function useWeather() {
   const [aqi, setAqi] = useState(null);
   const [alerts, setAlerts] = useState(null);
   const [location, setLocation] = useState(null); // { name, latitude, longitude, timezone, id }
-  
+
   const [savedLocations, setSavedLocations] = useState(loadSavedLocations());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [geoStatus, setGeoStatus] = useState('pending'); // 'pending' | 'granted' | 'denied' | 'unavailable'
+  const [geoStatus, setGeoStatus] = useState("pending"); // 'pending' | 'granted' | 'denied' | 'unavailable'
   const [geoError, setGeoError] = useState(null);
 
   // Track the last-attempted coordinates so retry works even if the first fetch failed
   const lastAttemptRef = useRef(null);
 
   // Fetch weather for given coords
-  const loadWeather = useCallback(async (lat, lon, timezone = 'auto', cityName = null) => {
-    lastAttemptRef.current = { lat, lon, timezone, cityName };
-    setLoading(true);
-    setError(null);
+  const loadWeather = useCallback(
+    async (lat, lon, timezone = "auto", cityName = null) => {
+      lastAttemptRef.current = { lat, lon, timezone, cityName };
+      setLoading(true);
+      setError(null);
 
-    try {
-      const [weatherRes, aqiRes, alertsRes] = await Promise.allSettled([
-        fetchWeather(lat, lon, timezone),
-        fetchAirQuality(lat, lon, timezone),
-        fetchAlerts(lat, lon)
-      ]);
+      try {
+        const [weatherRes, aqiRes, alertsRes] = await Promise.allSettled([
+          fetchWeather(lat, lon, timezone),
+          fetchAirQuality(lat, lon, timezone),
+          fetchAlerts(lat, lon),
+        ]);
 
-      if (weatherRes.status === 'rejected') {
-        throw new Error('Weather fetch failed');
-      }
-
-      const data = weatherRes.value;
-
-      // If no city name provided, reverse geocode
-      let name = cityName;
-      if (!name) {
-        name = await reverseGeocode(lat, lon);
-      }
-
-      const locId = `${lat.toFixed(4)},${lon.toFixed(4)}`;
-      const loc = {
-        id: locId,
-        name,
-        latitude: lat,
-        longitude: lon,
-        timezone: data.timezone || timezone,
-      };
-
-      setWeather(data);
-      setAqi(aqiRes.status === 'fulfilled' ? aqiRes.value : null);
-      setAlerts(alertsRes.status === 'fulfilled' ? alertsRes.value : null);
-      setLocation(loc);
-
-      // Add to saved locations if it's the first time and array is empty
-      setSavedLocations(prev => {
-        if (prev.length === 0) {
-          const newSaved = [loc];
-          saveLocations(newSaved);
-          return newSaved;
+        if (weatherRes.status === "rejected") {
+          throw new Error("Weather fetch failed");
         }
-        return prev;
-      });
 
-    } catch (err) {
-      console.error('Weather fetch failed:', err);
-      setError('Unable to fetch weather data. Please check your connection and try again.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        const data = weatherRes.value;
+
+        // If no city name provided, reverse geocode
+        let name = cityName;
+        if (!name) {
+          name = await reverseGeocode(lat, lon);
+        }
+
+        const locId = `${lat.toFixed(4)},${lon.toFixed(4)}`;
+        const loc = {
+          id: locId,
+          name,
+          latitude: lat,
+          longitude: lon,
+          timezone: data.timezone || timezone,
+        };
+
+        setWeather(data);
+        setAqi(aqiRes.status === "fulfilled" ? aqiRes.value : null);
+        setAlerts(alertsRes.status === "fulfilled" ? alertsRes.value : null);
+        setLocation(loc);
+
+        // Add to saved locations if it's the first time and array is empty
+        setSavedLocations((prev) => {
+          if (prev.length === 0) {
+            const newSaved = [loc];
+            saveLocations(newSaved);
+            return newSaved;
+          }
+          return prev;
+        });
+      } catch (err) {
+        console.error("Weather fetch failed:", err);
+        setError(
+          "Unable to fetch weather data. Please check your connection and try again.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
 
   const addLocation = useCallback((loc) => {
-    setSavedLocations(prev => {
+    setSavedLocations((prev) => {
       // Avoid duplicates
-      if (prev.some(l => l.id === loc.id || (Math.abs(l.latitude - loc.latitude) < 0.01 && Math.abs(l.longitude - loc.longitude) < 0.01))) {
+      if (
+        prev.some(
+          (l) =>
+            l.id === loc.id ||
+            (Math.abs(l.latitude - loc.latitude) < 0.01 &&
+              Math.abs(l.longitude - loc.longitude) < 0.01),
+        )
+      ) {
         return prev;
       }
       const newSaved = [...prev, loc];
@@ -111,8 +128,8 @@ export default function useWeather() {
   }, []);
 
   const removeLocation = useCallback((id) => {
-    setSavedLocations(prev => {
-      const newSaved = prev.filter(l => l.id !== id);
+    setSavedLocations((prev) => {
+      const newSaved = prev.filter((l) => l.id !== id);
       saveLocations(newSaved);
       return newSaved;
     });
@@ -121,18 +138,29 @@ export default function useWeather() {
   // Select a location from search results or carousel
   const selectLocation = useCallback(
     (loc) => {
-      const locId = loc.id || `${loc.latitude.toFixed(4)},${loc.longitude.toFixed(4)}`;
+      const locId =
+        loc.id || `${loc.latitude.toFixed(4)},${loc.longitude.toFixed(4)}`;
       const fullLoc = { ...loc, id: locId };
       addLocation(fullLoc);
-      loadWeather(fullLoc.latitude, fullLoc.longitude, fullLoc.timezone || 'auto', fullLoc.name);
+      loadWeather(
+        fullLoc.latitude,
+        fullLoc.longitude,
+        fullLoc.timezone || "auto",
+        fullLoc.name,
+      );
     },
-    [loadWeather, addLocation]
+    [loadWeather, addLocation],
   );
 
   // Refresh current location's weather
   const refreshWeather = useCallback(() => {
     if (location) {
-      loadWeather(location.latitude, location.longitude, location.timezone, location.name);
+      loadWeather(
+        location.latitude,
+        location.longitude,
+        location.timezone,
+        location.name,
+      );
     } else if (lastAttemptRef.current) {
       const { lat, lon, timezone, cityName } = lastAttemptRef.current;
       loadWeather(lat, lon, timezone, cityName);
@@ -141,12 +169,17 @@ export default function useWeather() {
 
   // Init: geolocation → saved location → search prompt
   useEffect(() => {
-    if (!('geolocation' in navigator)) {
-      setGeoStatus('unavailable');
+    if (!("geolocation" in navigator)) {
+      setGeoStatus("unavailable");
       const saved = loadSavedLocations();
       if (saved && saved.length > 0) {
         const first = saved[0];
-        loadWeather(first.latitude, first.longitude, first.timezone, first.name);
+        loadWeather(
+          first.latitude,
+          first.longitude,
+          first.timezone,
+          first.name,
+        );
       } else {
         setLoading(false);
       }
@@ -155,27 +188,93 @@ export default function useWeather() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setGeoStatus('granted');
+        setGeoStatus("granted");
         loadWeather(position.coords.latitude, position.coords.longitude);
       },
       (err) => {
-        setGeoStatus('denied');
+        setGeoStatus("denied");
         if (err.code === err.PERMISSION_DENIED) {
-          setGeoError('Location access denied — search for a city instead.');
+          setGeoError("Location access denied — search for a city instead.");
         } else {
-          setGeoError("Couldn't determine your location — try again or search.");
+          setGeoError(
+            "Couldn't determine your location — try again or search.",
+          );
         }
         const saved = loadSavedLocations();
         if (saved && saved.length > 0) {
           const first = saved[0];
-          loadWeather(first.latitude, first.longitude, first.timezone, first.name);
+          loadWeather(
+            first.latitude,
+            first.longitude,
+            first.timezone,
+            first.name,
+          );
         } else {
           setLoading(false);
         }
       },
-      { timeout: 10000 }
+      { timeout: 10000 },
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const locateCurrentUser = useCallback(() => {
+    return new Promise((resolve, reject) => {
+      if (!("geolocation" in navigator)) {
+        const err = new Error("Geolocation is not supported by this browser.");
+        setError(err.message);
+        reject(err);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      setGeoStatus("pending");
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            setGeoStatus("granted");
+
+            await loadWeather(
+              position.coords.latitude,
+              position.coords.longitude,
+              "auto",
+            );
+
+            resolve(position);
+          } catch (err) {
+            reject(err);
+          }
+        },
+        (err) => {
+          setGeoStatus(
+            err.code === err.PERMISSION_DENIED ? "denied" : "unavailable",
+          );
+
+          let message = "Unable to detect your location.";
+
+          if (err.code === err.PERMISSION_DENIED) {
+            message =
+              "Location permission was denied. Please allow location access in your browser settings.";
+          } else if (err.code === err.POSITION_UNAVAILABLE) {
+            message =
+              "Your location is currently unavailable. Please try again.";
+          } else if (err.code === err.TIMEOUT) {
+            message = "Location detection timed out. Please try again.";
+          }
+
+          setError(message);
+          setLoading(false);
+          reject(err);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 0,
+        },
+      );
+    });
+  }, [loadWeather]);
 
   const clearGeoError = useCallback(() => setGeoError(null), []);
 
@@ -194,5 +293,6 @@ export default function useWeather() {
     removeLocation,
     selectLocation,
     refreshWeather,
+    locateCurrentUser,
   };
 }

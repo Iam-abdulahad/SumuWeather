@@ -1,81 +1,146 @@
-import html2canvas from 'html2canvas-pro';
-import { Camera } from 'lucide-react';
-import { useState } from 'react';
+import html2canvas from "html2canvas-pro";
+import { Camera } from "lucide-react";
+import { useState } from "react";
 
-export default function ShareButton({ targetId = 'app-dashboard', fileName = 'weather-snapshot.png' }) {
+export default function ShareButton({
+  targetId = "app-dashboard",
+  fileName = "sumo-weather.png",
+}) {
   const [isCapturing, setIsCapturing] = useState(false);
+
+  const canvasToBlob = (canvas) =>
+    new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error("Unable to create screenshot."));
+        },
+        "image/png",
+        1,
+      );
+    });
+
+  const downloadBlob = (blob, name) => {
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = name;
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
 
   const handleShare = async () => {
     if (isCapturing) return;
-    
+
     const element = document.getElementById(targetId);
+
     if (!element) {
-      console.error('Target element not found');
+      console.error("Screenshot target not found.");
       return;
     }
 
+    setIsCapturing(true);
+
+    element.classList.add("screenshot-mode");
+
     try {
-      setIsCapturing(true);
-      
-      // We temporarily adjust some styles to make sure the capture looks right
-      // html2canvas doesn't always love backdrop-blur, but pro handles it better.
+      // Let React/browser finish the temporary UI changes
+      await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+
+      const rect = element.getBoundingClientRect();
+
       const canvas = await html2canvas(element, {
         useCORS: true,
-        scale: 2,
-        backgroundColor: '#0B1526', // Fallback
-        logging: false
+        allowTaint: false,
+
+        scale: Math.min(window.devicePixelRatio || 2, 2),
+
+        width: rect.width,
+        height: element.scrollHeight,
+
+        backgroundColor: "#0B1526",
+
+        logging: false,
+
+        imageTimeout: 15000,
+
+        onclone: (clonedDocument) => {
+          const clonedElement = clonedDocument.getElementById(targetId);
+
+          if (clonedElement) {
+            clonedElement.classList.add("screenshot-clone");
+          }
+        },
       });
 
-      // Convert to blob
-      canvas.toBlob(async (blob) => {
-        if (!blob) throw new Error('Canvas to Blob failed');
+      const blob = await canvasToBlob(canvas);
 
-        // Check if Web Share API is supported and can share files
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: 'image/png' })] })) {
-          const file = new File([blob], fileName, { type: 'image/png' });
-          try {
-            await navigator.share({
-              title: 'SuMo Weather',
-              text: 'Check out the weather!',
-              files: [file]
-            });
-          } catch (e) {
-            // User cancelled or share failed, fallback to download
+      const file = new File([blob], fileName, {
+        type: "image/png",
+        lastModified: Date.now(),
+      });
+
+      if (
+        navigator.share &&
+        navigator.canShare &&
+        navigator.canShare({ files: [file] })
+      ) {
+        try {
+          await navigator.share({
+            title: "SuMo Weather",
+            text: "Check out my current weather!",
+            files: [file],
+          });
+        } catch (error) {
+          // User cancelled the share dialog.
+          if (error?.name !== "AbortError") {
             downloadBlob(blob, fileName);
           }
-        } else {
-          // Desktop fallback: Download the image
-          downloadBlob(blob, fileName);
         }
-      }, 'image/png');
-
-    } catch (err) {
-      console.error('Failed to capture screen:', err);
+      } else {
+        downloadBlob(blob, fileName);
+      }
+    } catch (error) {
+      console.error("Screenshot failed:", error);
     } finally {
+      element.classList.remove("screenshot-mode");
       setIsCapturing(false);
     }
   };
 
-  const downloadBlob = (blob, name) => {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
   return (
-    <button 
+    <button
       onClick={handleShare}
       disabled={isCapturing}
-      className="flex items-center gap-2 rounded-glass bg-white/10 px-4 py-2 font-body text-sm font-medium text-cloud-white transition-colors hover:bg-white/20 disabled:opacity-50"
+      className="
+        flex
+        items-center
+        gap-2
+        rounded-glass
+        bg-white/10
+        px-4
+        py-2
+        font-body
+        text-sm
+        font-medium
+        text-cloud-white
+        transition
+        hover:bg-white/20
+        disabled:cursor-wait
+        disabled:opacity-50
+      "
       aria-label="Share snapshot"
     >
-      <Camera size={18} className={isCapturing ? 'animate-pulse' : ''} />
-      <span className="hidden sm:inline">{isCapturing ? 'Capturing...' : 'Share'}</span>
+      <Camera size={18} className={isCapturing ? "animate-pulse" : ""} />
+
+      <span className="hidden sm:inline">
+        {isCapturing ? "Capturing..." : "Share"}
+      </span>
     </button>
   );
 }
